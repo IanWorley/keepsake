@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: 'postgres:17'
+    environment:
+      - 'POSTGRES_DB=keepsake'
+      - 'POSTGRES_PASSWORD=keepsake'
+      - 'POSTGRES_USER=keepsake'
+    ports:
+      - '5433:5432'
+    volumes:
+      - 'keepsake-postgres:/var/lib/postgresql/data'
+
+volumes:
+  keepsake-postgres:

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "dependencyDashboard": true,
+  "labels": [
+    "dependencies"
+  ],
+  "enabledManagers": [
+    "docker-compose",
+    "github-actions",
+    "maven",
+    "npm"
+  ],
+  "packageRules": [
+    {
+      "description": "Automerge low-risk patch updates after tests pass.",
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group frontend minor and patch dependency updates.",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "frontend dependencies"
+    },
+    {
+      "description": "Group Maven minor and patch dependency updates.",
+      "matchManagers": [
+        "maven"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "maven dependencies"
+    },
+    {
+      "description": "Keep major updates separate for review.",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": null
+    }
+  ],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
+  "timezone": "America/Chicago"
+}
