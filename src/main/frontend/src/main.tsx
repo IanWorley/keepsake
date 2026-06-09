@@ -136,20 +136,34 @@ function Feed({ user }: { user: UserSummary }) {
   }
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Plus className="h-4 w-4" /> New post</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="mx-auto max-w-[560px] space-y-4">
+      <Card className="shadow-sm">
+        <CardContent className="pt-4">
           <form className="space-y-3" onSubmit={create}>
-            <Textarea value={body} onChange={(event) => setBody(event.target.value)} placeholder="Write something..." />
-            <Input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => setFiles(event.target.files)} />
-            <Button type="submit"><Send className="h-4 w-4" /> Post</Button>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-200 text-stone-600 text-sm font-medium">
+                {user.displayName[0]?.toUpperCase()}
+              </div>
+              <div className="flex-1">
+                <Textarea
+                  value={body}
+                  onChange={(event) => setBody(event.target.value)}
+                  placeholder={`What's on your mind, ${user.displayName.split(" ")[0]}?`}
+                  className="min-h-[60px] resize-y border-0 bg-stone-100 px-4 py-3 text-[15px] placeholder:text-stone-500 focus-visible:ring-0"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between border-t pt-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-sm text-stone-600 hover:bg-stone-100">
+                <Images className="h-5 w-5" /> Photo
+                <Input type="file" accept="image/jpeg,image/png,image/webp" multiple className="hidden" onChange={(event) => setFiles(event.target.files)} />
+              </label>
+              <Button type="submit" className="rounded-full px-6"><Send className="h-4 w-4" /> Post</Button>
+            </div>
           </form>
         </CardContent>
       </Card>
-      <div className="space-y-4">
+      <div className="space-y-3">
         {posts.map((post) => <PostCard key={post.id} post={post} user={user} onChange={load} />)}
       </div>
     </div>
@@ -158,15 +172,20 @@ function Feed({ user }: { user: UserSummary }) {
 
 function PostCard({ post, user, onChange }: { post: PostSummary; user: UserSummary; onChange: () => Promise<void> }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm">Post</CardTitle>
-        <p className="text-xs text-stone-500">{new Date(post.createdAt).toLocaleString()}</p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {post.body ? <p className="preserve-lines text-sm leading-6">{post.body}</p> : null}
+    <Card className="overflow-hidden shadow-sm">
+      <div className="flex items-center gap-3 px-4 pt-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-200 text-stone-600 text-sm font-medium">U</div>
+        <div className="flex-1">
+          <div className="font-semibold text-[15px]">User</div>
+          <div className="text-xs text-stone-500">{new Date(post.createdAt).toLocaleString()}</div>
+        </div>
+      </div>
+      <CardContent className="space-y-3 pt-3">
+        {post.body ? <p className="preserve-lines px-1 text-[15px] leading-6">{post.body}</p> : null}
         <PhotoGrid photos={post.photos} />
-        <Comments targetType="POST" targetId={post.id} initial={post.comments} user={user} onChange={onChange} />
+        <div className="border-t pt-2">
+          <Comments targetType="POST" targetId={post.id} initial={post.comments} user={user} onChange={onChange} />
+        </div>
       </CardContent>
     </Card>
   );
@@ -241,23 +260,23 @@ function Comments({ targetType, targetId, initial, onChange }: {
   }
 
   return (
-    <section className="space-y-3 border-t border-stone-100 pt-3">
-      <div className="flex items-center gap-2 text-xs font-medium text-stone-500">
-        <MessageCircle className="h-4 w-4" /> Comments
-      </div>
+    <section className="space-y-2 pt-1">
       <div className="space-y-2">
         {initial.map((comment) => (
-          <div key={comment.id} className="rounded-md bg-stone-50 px-3 py-2 text-sm">
-            <p className="preserve-lines">{comment.body}</p>
-            <p className="mt-1 text-xs text-stone-500">
-              {new Date(comment.createdAt).toLocaleString()}{comment.edited ? " · edited" : ""}
-            </p>
+          <div key={comment.id} className="flex gap-2">
+            <div className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-stone-200 text-[10px] text-stone-600">U</div>
+            <div className="flex-1 rounded-2xl bg-stone-100 px-3 py-2 text-sm">
+              <p className="preserve-lines">{comment.body}</p>
+              <p className="mt-0.5 text-[10px] text-stone-500">
+                {new Date(comment.createdAt).toLocaleString()}{comment.edited ? " · edited" : ""}
+              </p>
+            </div>
           </div>
         ))}
       </div>
-      <form className="flex gap-2" onSubmit={submit}>
-        <Input value={body} onChange={(event) => setBody(event.target.value)} placeholder="Add a comment" />
-        <Button size="icon" type="submit" aria-label="Send comment"><Send className="h-4 w-4" /></Button>
+      <form className="flex gap-2 pl-9" onSubmit={submit}>
+        <Input value={body} onChange={(event) => setBody(event.target.value)} placeholder="Write a comment..." className="h-9 flex-1 rounded-full bg-stone-100 border-0 text-sm" />
+        <Button size="icon" className="h-9 w-9 rounded-full" type="submit" aria-label="Send comment"><Send className="h-4 w-4" /></Button>
       </form>
     </section>
   );
